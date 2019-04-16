@@ -41,6 +41,21 @@ class TodoListTableViewController: UITableViewController {
 
         return cell
     }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print(itemArray[indexPath.row])
+        
+        // Check whether the cell already has a checkmark or not
+        // Note: Check for == .none does NOT seem to work
+        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
+            tableView.cellForRow(at: indexPath)?.accessoryType = .none
+        } else {
+            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
+        }
+        
+        
+        tableView.deselectRow(at: indexPath, animated: true) // Deselect the row after some time (if you don't have this then the selected row will be always highlighted with grey)
+    }
 
     /*
     // Override to support conditional editing of the table view.
