@@ -10,11 +10,15 @@ import UIKit
 
 class TodoListTableViewController: UITableViewController {
     
-    var itemArray = ["a", "b", "c"]
+    var itemArray = [Item]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        itemArray.append(Item(title: "Test 1"))
+        itemArray.append(Item(title: "Test 2"))
+        itemArray.append(Item(title: "Test 3"))
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -36,25 +40,23 @@ class TodoListTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TodoListCell", for: indexPath)
+        let item = itemArray[indexPath.row]
 
-        cell.textLabel?.text = itemArray[indexPath.row]
+        cell.textLabel?.text = item.title
+        
+        cell.accessoryType = (item.isDone) ? .checkmark : .none
 
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(itemArray[indexPath.row])
+        let selectedItem = itemArray[indexPath.row]
         
-        // Check whether the cell already has a checkmark or not
-        // Note: Check for == .none does NOT seem to work
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        } else {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
-        
+        selectedItem.isDone = !selectedItem.isDone
         
         tableView.deselectRow(at: indexPath, animated: true) // Deselect the row after some time (if you don't have this then the selected row will be always highlighted with grey)
+        
+        tableView.reloadData() // Required to display the checkmark when the row is selected
     }
 
     // MARK: - IBAction
@@ -70,7 +72,7 @@ class TodoListTableViewController: UITableViewController {
             // Process textField.text
             let textField = alertController.textFields![0] as UITextField
             
-            self.itemArray.append(textField.text!)
+            self.itemArray.append(Item(title: textField.text!))
             self.tableView.reloadData()
             
         }
