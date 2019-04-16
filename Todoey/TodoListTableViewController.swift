@@ -11,15 +11,15 @@ import UIKit
 class TodoListTableViewController: UITableViewController {
     
     var itemArray = ["a", "b", "c"]
+    let defaults = UserDefaults.standard
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        if let items = defaults.value(forKey: "TodoListArray") as? [String] {
+            self.itemArray = items
+        }
+        
     }
 
     // MARK: - Table view data source
@@ -71,6 +71,9 @@ class TodoListTableViewController: UITableViewController {
             let textField = alertController.textFields![0] as UITextField
             
             self.itemArray.append(textField.text!)
+            
+            self.defaults.setValue(self.itemArray, forKey: "TodoListArray")
+            
             self.tableView.reloadData()
             
         }

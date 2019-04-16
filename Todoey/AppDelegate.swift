@@ -15,7 +15,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        // Get the path to the document directory in user's home directory
+        // i.e. Get to the Todoey app sandbox folder
+        
+        // Sample output: /Users/ray/Library/Developer/CoreSimulator/Devices/3C95D34B-5233-45E6-9B9D-3A8B6006B194/data/Containers/Data/Application/4506432B-C693-4E31-9E66-1ABB46F4E615/Documents
+
+        // UserDefaults file path: /Users/ray/Library/Developer/CoreSimulator/Devices/3C95D34B-5233-45E6-9B9D-3A8B6006B194/data/Containers/Data/Application/4506432B-C693-4E31-9E66-1ABB46F4E615/Library/Preferences/com.raykrishardi.Todoey.plist
+        print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last! as String)
+        
         return true
     }
 
