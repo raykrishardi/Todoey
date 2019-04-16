@@ -12,6 +12,7 @@
 		710EB3862265A82F0056B500 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 710EB3842265A82F0056B500 /* Main.storyboard */; };
 		710EB3882265A8320056B500 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 710EB3872265A8320056B500 /* Assets.xcassets */; };
 		710EB38B2265A8320056B500 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 710EB3892265A8320056B500 /* LaunchScreen.storyboard */; };
+		710EB3932265A8770056B500 /* TodoListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 710EB3922265A8770056B500 /* TodoListTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		710EB3872265A8320056B500 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		710EB38A2265A8320056B500 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		710EB38C2265A8320056B500 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		710EB3922265A8770056B500 /* TodoListTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +58,7 @@
 			children = (
 				710EB3802265A82F0056B500 /* AppDelegate.swift */,
 				710EB3822265A82F0056B500 /* ViewController.swift */,
+				710EB3922265A8770056B500 /* TodoListTableViewController.swift */,
 				710EB3842265A82F0056B500 /* Main.storyboard */,
 				710EB3872265A8320056B500 /* Assets.xcassets */,
 				710EB3892265A8320056B500 /* LaunchScreen.storyboard */,
@@ -137,6 +140,7 @@
 			files = (
 				710EB3832265A82F0056B500 /* ViewController.swift in Sources */,
 				710EB3812265A82F0056B500 /* AppDelegate.swift in Sources */,
+				710EB3932265A8770056B500 /* TodoListTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
