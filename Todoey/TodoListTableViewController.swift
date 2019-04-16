@@ -57,6 +57,30 @@ class TodoListTableViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true) // Deselect the row after some time (if you don't have this then the selected row will be always highlighted with grey)
     }
 
+    // MARK: - IBAction
+    
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+        let alertController = UIAlertController(title: "Add Item", message: "", preferredStyle: .alert)
+        
+        alertController.addTextField { (textField) in
+            textField.placeholder = "Add new item"
+        }
+        
+        let addAction = UIAlertAction(title: "Add Item", style: .default) { (alertAction) in
+            // Process textField.text
+            let textField = alertController.textFields![0] as UITextField
+            
+            self.itemArray.append(textField.text!)
+            self.tableView.reloadData()
+            
+        }
+        
+        alertController.addAction(addAction)
+        
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    
     /*
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
