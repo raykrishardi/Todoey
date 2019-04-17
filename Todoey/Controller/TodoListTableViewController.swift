@@ -19,9 +19,7 @@ class TodoListTableViewController: UITableViewController {
         
         print(dataFilePath!)
         
-        itemArray.append(Item(title: "Test 1"))
-        itemArray.append(Item(title: "Test 2"))
-        itemArray.append(Item(title: "Test 3"))
+        loadItems()
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -99,6 +97,17 @@ class TodoListTableViewController: UITableViewController {
         }
         
         self.tableView.reloadData()
+    }
+    
+    func loadItems() {
+        if let data = try? Data(contentsOf: dataFilePath!) {
+            let decoder = PropertyListDecoder()
+            do {
+                itemArray = try decoder.decode([Item].self, from: data)
+            } catch {
+                print("Error decoding: \(error)")
+            }
+        }
     }
     
     /*
