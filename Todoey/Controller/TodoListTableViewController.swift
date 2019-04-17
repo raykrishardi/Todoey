@@ -11,10 +11,14 @@ import UIKit
 class TodoListTableViewController: UITableViewController {
     
     var itemArray = [Item]()
-
+    
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("items.plist")
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        print(dataFilePath!)
+        
         itemArray.append(Item(title: "Test 1"))
         itemArray.append(Item(title: "Test 2"))
         itemArray.append(Item(title: "Test 3"))
@@ -54,9 +58,10 @@ class TodoListTableViewController: UITableViewController {
         
         selectedItem.isDone = !selectedItem.isDone
         
+        self.saveItems()
+        
         tableView.deselectRow(at: indexPath, animated: true) // Deselect the row after some time (if you don't have this then the selected row will be always highlighted with grey)
         
-        tableView.reloadData() // Required to display the checkmark when the row is selected
     }
 
     // MARK: - IBAction
@@ -73,7 +78,8 @@ class TodoListTableViewController: UITableViewController {
             let textField = alertController.textFields![0] as UITextField
             
             self.itemArray.append(Item(title: textField.text!))
-            self.tableView.reloadData()
+            
+            self.saveItems()
             
         }
         
@@ -82,6 +88,18 @@ class TodoListTableViewController: UITableViewController {
         present(alertController, animated: true, completion: nil)
     }
     
+    func saveItems() {
+        let encoder = PropertyListEncoder()
+        
+        do {
+            let data = try encoder.encode(self.itemArray)
+            try data.write(to: self.dataFilePath!)
+        } catch {
+            print("Error encoding: \(error)")
+        }
+        
+        self.tableView.reloadData()
+    }
     
     /*
     // Override to support conditional editing of the table view.
