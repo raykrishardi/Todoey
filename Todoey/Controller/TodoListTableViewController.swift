@@ -7,17 +7,16 @@
 //
 
 import UIKit
+import CoreData
 
 class TodoListTableViewController: UITableViewController {
     
     var itemArray = [Item]()
+    
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        itemArray.append(Item(title: "Test 1"))
-        itemArray.append(Item(title: "Test 2"))
-        itemArray.append(Item(title: "Test 3"))
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -72,8 +71,10 @@ class TodoListTableViewController: UITableViewController {
             // Process textField.text
             let textField = alertController.textFields![0] as UITextField
             
-            self.itemArray.append(Item(title: textField.text!))
-            self.tableView.reloadData()
+            self.itemArray.append(Item(title: textField.text!, context: self.context))
+            
+            self.saveItems()
+            
             
         }
         
@@ -82,6 +83,14 @@ class TodoListTableViewController: UITableViewController {
         present(alertController, animated: true, completion: nil)
     }
     
+    func saveItems() {
+        do {
+            try context.save()
+        } catch {
+            print("Error saving context: \(error)")
+        }
+        self.tableView.reloadData()
+    }
     
     /*
     // Override to support conditional editing of the table view.
