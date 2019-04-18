@@ -55,6 +55,8 @@ class TodoListTableViewController: UITableViewController {
         
         selectedItem.isDone = !selectedItem.isDone
         
+        saveItems()
+        
         tableView.deselectRow(at: indexPath, animated: true) // Deselect the row after some time (if you don't have this then the selected row will be always highlighted with grey)
         
         tableView.reloadData() // Required to display the checkmark when the row is selected
