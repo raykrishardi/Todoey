@@ -18,6 +18,8 @@ class TodoListTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        loadItems()
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -90,6 +92,15 @@ class TodoListTableViewController: UITableViewController {
             print("Error saving context: \(error)")
         }
         self.tableView.reloadData()
+    }
+    
+    func loadItems() {
+        let request: NSFetchRequest<Item> = Item.fetchRequest()
+        do {
+            itemArray = try context.fetch(request)
+        } catch {
+            print("Error fetching Item objects from context: \(error)")
+        }
     }
     
     /*
