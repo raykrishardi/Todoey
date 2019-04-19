@@ -12,9 +12,10 @@ import CoreData
 
 
 public class Item: NSManagedObject {
-    convenience init(title: String, context: NSManagedObjectContext) {
+    convenience init(title: String, category: Category, context: NSManagedObjectContext) {
         self.init(context: context)
         self.title = title
         self.isDone = false
+        self.category = category
     }
 }

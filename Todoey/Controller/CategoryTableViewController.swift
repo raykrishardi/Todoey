@@ -36,6 +36,21 @@ class CategoryTableViewController: UITableViewController {
         return cell
     }
     
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: "goToItem", sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToItem" {
+            let destVC = segue.destination as! TodoListTableViewController
+            
+            // Get the indexPath (row and section) of the currently selected row 
+            if let indexPath = tableView.indexPathForSelectedRow {
+                destVC.selectedCategory = categories[indexPath.row]
+            }
+        }
+    }
+    
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         let alert = UIAlertController(title: "Add new category", message: "", preferredStyle: .alert)
         
@@ -71,6 +86,7 @@ class CategoryTableViewController: UITableViewController {
         } catch {
             print("Error fetching from context: \(error)")
         }
+        self.tableView.reloadData()
     }
     
 }

@@ -12,13 +12,16 @@ import CoreData
 class TodoListTableViewController: UITableViewController {
     
     var itemArray = [Item]()
+    var selectedCategory: Category? {
+        didSet {
+            loadItems()
+        }
+    }
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        loadItems()
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -75,7 +78,7 @@ class TodoListTableViewController: UITableViewController {
             // Process textField.text
             let textField = alertController.textFields![0] as UITextField
             
-            self.itemArray.append(Item(title: textField.text!, context: self.context))
+            self.itemArray.append(Item(title: textField.text!, category: self.selectedCategory!, context: self.context))
             
             self.saveItems()
             
@@ -96,7 +99,21 @@ class TodoListTableViewController: UITableViewController {
         self.tableView.reloadData()
     }
     
-    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()) {
+    // One way to make an optional parameter is by declaring the parameter type as OPTIONAL and provide DEFAULT VALUE of NIL
+    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), additionalPredicate: NSPredicate? = nil) {
+        
+        // Get item(s) that belong to the selected category
+        // Check item.category.name == selectedCategory.name
+        let categoryPredicate = NSPredicate(format: "category.name MATCHES %@", self.selectedCategory!.name!)
+        
+        // If there is an additional predicate then create a compund AND predicate
+        // Else just get item(s) that belong to the selected category
+        if let additionalPredicate = additionalPredicate {
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionalPredicate])
+        } else {
+            request.predicate = categoryPredicate
+        }
+        
         do {
             itemArray = try context.fetch(request)
         } catch {
@@ -115,12 +132,12 @@ extension TodoListTableViewController: UISearchBarDelegate {
         
         // Specify the query string / search term (i.e. TITLE attribute value that contains the search bar text and specify CASE AND DIACRITIC INSENSITIVE ([cd]))
         // %@ -> argument for string/object (i.e. CANNOT use %s because it refers to C string)
-        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        let filterTitlePredicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
         
         // Sort the result based on the TITLE attribute in ALPHABETICAL ORDER
         request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
         
-        loadItems(with: request)
+        loadItems(with: request, additionalPredicate: filterTitlePredicate)
         
     }
     
