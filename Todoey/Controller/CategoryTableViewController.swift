@@ -7,19 +7,19 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 class CategoryTableViewController: UITableViewController {
     
     var categories: [Category] = []
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-
+    let realm = try! Realm()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
 
-        loadCategories()
+//        loadCategories()
     }
 
     // MARK: - Table view data source
@@ -61,8 +61,9 @@ class CategoryTableViewController: UITableViewController {
         let addAction = UIAlertAction(title: "Add", style: .default) { (alertAction) in
             let textField = alert.textFields![0] as UITextField
             
-            self.categories.append(Category(name: textField.text!, context: self.context))
-            self.saveCategories()
+            let newCategory = Category(name: textField.text!)
+            self.categories.append(newCategory)
+            self.save(category: newCategory)
             self.tableView.reloadData()
         }
         
@@ -71,22 +72,24 @@ class CategoryTableViewController: UITableViewController {
         present(alert, animated: true, completion: nil)
     }
     
-    func saveCategories() {
+    func save(category: Category) {
         do {
-            try context.save()
+            try realm.write {
+                realm.add(category)
+            }
         } catch {
-            print("Error saving context: \(error)")
+            print("Error saving category: \(error)")
         }
     }
     
-    func loadCategories() {
-        let request: NSFetchRequest<Category> = Category.fetchRequest()
-        do {
-            categories = try context.fetch(request)
-        } catch {
-            print("Error fetching from context: \(error)")
-        }
-        self.tableView.reloadData()
-    }
+//    func loadCategories() {
+//        let request: NSFetchRequest<Category> = Category.fetchRequest()
+//        do {
+//            categories = try context.fetch(request)
+//        } catch {
+//            print("Error fetching from context: \(error)")
+//        }
+//        self.tableView.reloadData()
+//    }
     
 }
