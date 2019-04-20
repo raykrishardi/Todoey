@@ -13,7 +13,7 @@ class TodoListTableViewController: UITableViewController {
     
     let realm = try! Realm()
     
-    var itemArray: Results<Item>?
+    var items: Results<Item>?
     var selectedCategory: Category? {
         didSet {
             loadItems()
@@ -29,13 +29,13 @@ class TodoListTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return itemArray?.count ?? 1
+        return items?.count ?? 1
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TodoListCell", for: indexPath)
         
-        if let item = itemArray?[indexPath.row] {
+        if let item = items?[indexPath.row] {
             
             cell.textLabel?.text = item.title
             
@@ -48,7 +48,7 @@ class TodoListTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let selectedItem = itemArray?[indexPath.row] {
+        if let selectedItem = items?[indexPath.row] {
             do {
                 try realm.write {
                     selectedItem.isDone = !selectedItem.isDone
@@ -99,46 +99,37 @@ class TodoListTableViewController: UITableViewController {
     // One way to make an optional parameter is by declaring the parameter type as OPTIONAL and provide DEFAULT VALUE of NIL
     func loadItems() {
         
-        itemArray = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
+        items = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
         
         self.tableView.reloadData()
     }
     
 }
 
-//// MARK: - Search bar functionality
-//extension TodoListTableViewController: UISearchBarDelegate {
-//
-//    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-//        let request: NSFetchRequest<Item> = Item.fetchRequest()
-//
-//        // Specify the query string / search term (i.e. TITLE attribute value that contains the search bar text and specify CASE AND DIACRITIC INSENSITIVE ([cd]))
-//        // %@ -> argument for string/object (i.e. CANNOT use %s because it refers to C string)
-//        let filterTitlePredicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
-//
-//        // Sort the result based on the TITLE attribute in ALPHABETICAL ORDER
-//        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-//
-//        loadItems(with: request, additionalPredicate: filterTitlePredicate)
-//
-//    }
-//
-//    // This delegate method is called each time the text in the search bar changes
-//    // i.e. when the user clears the search bar text, it will be called as well
-//    // However, this method will NOT be called when the search bar loads up with empty string because the text did NOT change
-//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//        // If the search bar text changes AND it changes to an empty string (i.e. "")
-//        if searchBar.text == "" {
-//            loadItems() // Initialise the itemArray with all items in core data
-//
-//            // WHENEVER you need to UPDATE THE USER INTERFACE
-//            // ALWAYS PERFORM IT IN THE MAIN THREAD!!!
-//            // IF NOT IN THE MAIN THREAD, search bar still the first responder...
-//            DispatchQueue.main.async {
-//                // Remove the focus on / Deactivate search bar (i.e. remove keyboard and cursor from search bar))
-//                searchBar.resignFirstResponder()
-//            }
-//        }
-//    }
-//
-//}
+// MARK: - Search bar functionality
+extension TodoListTableViewController: UISearchBarDelegate {
+
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        items = items?.filter("title CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "dateCreated", ascending: false)
+        tableView.reloadData()
+    }
+
+    // This delegate method is called each time the text in the search bar changes
+    // i.e. when the user clears the search bar text, it will be called as well
+    // However, this method will NOT be called when the search bar loads up with empty string because the text did NOT change
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        // If the search bar text changes AND it changes to an empty string (i.e. "")
+        if searchBar.text == "" {
+            loadItems() // Initialise the itemArray with all items in core data
+
+            // WHENEVER you need to UPDATE THE USER INTERFACE
+            // ALWAYS PERFORM IT IN THE MAIN THREAD!!!
+            // IF NOT IN THE MAIN THREAD, search bar still the first responder...
+            DispatchQueue.main.async {
+                // Remove the focus on / Deactivate search bar (i.e. remove keyboard and cursor from search bar))
+                searchBar.resignFirstResponder()
+            }
+        }
+    }
+
+}
