@@ -101,7 +101,7 @@ class TodoListTableViewController: UITableViewController {
         
         items = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
         
-        self.tableView.reloadData()
+        self.tableView.reloadData() // Required for refreshing table view when search bar (x) button is pressed
     }
     
 }
