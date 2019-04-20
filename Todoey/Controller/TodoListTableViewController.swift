@@ -48,15 +48,15 @@ class TodoListTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        if let selectedItem = itemArray?[indexPath.row] {
-//            do {
-//                try realm.write {
-//                    selectedItem.isDone = !selectedItem.isDone
-//                }
-//            } catch {
-//                print("Error updating to Realm: \(error)")
-//            }
-//        }
+        if let selectedItem = itemArray?[indexPath.row] {
+            do {
+                try realm.write {
+                    selectedItem.isDone = !selectedItem.isDone
+                }
+            } catch {
+                print("Error updating to Realm: \(error)")
+            }
+        }
 
         tableView.deselectRow(at: indexPath, animated: true) // Deselect the row after some time (if you don't have this then the selected row will be always highlighted with grey)
         
