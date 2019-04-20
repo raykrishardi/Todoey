@@ -7,57 +7,57 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 class TodoListTableViewController: UITableViewController {
     
-    var itemArray = [Item]()
+    let realm = try! Realm()
+    
+    var itemArray: Results<Item>?
     var selectedCategory: Category? {
         didSet {
-//            loadItems()
+            loadItems()
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
 
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
 
     // MARK: - Table view data source
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 1
-    }
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return itemArray.count
+        return itemArray?.count ?? 1
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TodoListCell", for: indexPath)
-        let item = itemArray[indexPath.row]
-
-        cell.textLabel?.text = item.title
         
-        cell.accessoryType = (item.isDone) ? .checkmark : .none
+        if let item = itemArray?[indexPath.row] {
+            
+            cell.textLabel?.text = item.title
+            
+            cell.accessoryType = (item.isDone) ? .checkmark : .none
+            
+        }
+
 
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedItem = itemArray[indexPath.row]
-        
-        selectedItem.isDone = !selectedItem.isDone
-        
-//        saveItems()
-        
+//        if let selectedItem = itemArray?[indexPath.row] {
+//            do {
+//                try realm.write {
+//                    selectedItem.isDone = !selectedItem.isDone
+//                }
+//            } catch {
+//                print("Error updating to Realm: \(error)")
+//            }
+//        }
+
         tableView.deselectRow(at: indexPath, animated: true) // Deselect the row after some time (if you don't have this then the selected row will be always highlighted with grey)
         
         tableView.reloadData() // Required to display the checkmark when the row is selected
@@ -76,10 +76,18 @@ class TodoListTableViewController: UITableViewController {
             // Process textField.text
             let textField = alertController.textFields![0] as UITextField
             
-//            self.itemArray.append(Item(title: textField.text!, category: self.selectedCategory!, context: self.context))
+            let newItem = Item(title: textField.text!)
             
-//            self.saveItems()
+            do {
+                try self.realm.write {
+                    self.realm.add(newItem)
+                    self.selectedCategory?.items.append(newItem)
+                }
+            } catch {
+                print("Error saving item: \(error)")
+            }
             
+            self.tableView.reloadData()
             
         }
         
@@ -88,37 +96,13 @@ class TodoListTableViewController: UITableViewController {
         present(alertController, animated: true, completion: nil)
     }
     
-//    func saveItems() {
-//        do {
-//            try context.save()
-//        } catch {
-//            print("Error saving context: \(error)")
-//        }
-//        self.tableView.reloadData()
-//    }
-    
     // One way to make an optional parameter is by declaring the parameter type as OPTIONAL and provide DEFAULT VALUE of NIL
-//    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), additionalPredicate: NSPredicate? = nil) {
-//        
-//        // Get item(s) that belong to the selected category
-//        // Check item.category.name == selectedCategory.name
-//        let categoryPredicate = NSPredicate(format: "category.name MATCHES %@", self.selectedCategory!.name!)
-//        
-//        // If there is an additional predicate then create a compund AND predicate
-//        // Else just get item(s) that belong to the selected category
-//        if let additionalPredicate = additionalPredicate {
-//            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionalPredicate])
-//        } else {
-//            request.predicate = categoryPredicate
-//        }
-//        
-//        do {
-//            itemArray = try context.fetch(request)
-//        } catch {
-//            print("Error fetching Item objects from context: \(error)")
-//        }
-//        self.tableView.reloadData()
-//    }
+    func loadItems() {
+        
+        itemArray = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
+        
+        self.tableView.reloadData()
+    }
     
 }
 
