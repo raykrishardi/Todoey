@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class TodoListTableViewController: UITableViewController {
+class TodoListTableViewController: SwipeTableViewController {
     
     let realm = try! Realm()
     
@@ -33,7 +33,7 @@ class TodoListTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "TodoListCell", for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         if let item = items?[indexPath.row] {
             
@@ -102,6 +102,19 @@ class TodoListTableViewController: UITableViewController {
         items = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
         
         self.tableView.reloadData() // Required for refreshing table view when search bar (x) button is pressed
+    }
+    
+    override func deleteModel(at indexPath: IndexPath) {
+        if let itemToBeDeleted = items?[indexPath.row] {
+            do {
+                try realm.write {
+                    realm.delete(itemToBeDeleted)
+                }
+            } catch {
+                print("Error deleting from Realm: \(error)")
+            }
+            tableView.reloadData()
+        }
     }
     
 }
