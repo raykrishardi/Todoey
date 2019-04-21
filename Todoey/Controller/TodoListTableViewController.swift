@@ -12,6 +12,8 @@ import ChameleonFramework
 
 class TodoListTableViewController: SwipeTableViewController {
     
+    @IBOutlet weak var searchBar: UISearchBar!
+    
     let realm = try! Realm()
     
     var items: Results<Item>?
@@ -24,6 +26,45 @@ class TodoListTableViewController: SwipeTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+    }
+    
+    // MARK: - Updating the Navigation Bar's UI
+    // Cannot be done in viewDidLoad() because TodoListTableViewController might NOT be in the NAVIGATION STACK YET
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        
+        guard let selectedCategory = selectedCategory else { fatalError("Selected category does not exist") }
+        
+        // Set the navigation bar's title to category name
+        title = selectedCategory.name
+        
+        setupNavBar(withHexCode: selectedCategory.hexColor)
+        
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(true)
+        
+        // Set nav bar and its elements color property to blue
+        setupNavBar(withHexCode: "007AFF")
+    }
+    
+    // MARK: - Navigation Bar
+    func setupNavBar(withHexCode hexColor: String) {
+        guard let navBar = navigationController?.navigationBar else { fatalError("Navigation controller does not exist yet") }
+        
+        // Set the navigation bar's title color to automatically adjust for readability
+        navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor(contrastingBlackOrWhiteColorOn: UIColor(hexString: hexColor), isFlat: true) as Any]
+        
+        // Change the navigation bar's barTintColor (nav bar's background color and status bar)
+        navBar.barTintColor = UIColor(hexString: hexColor)
+        
+        // Change the navigation bar's items (i.e. back button) and bar button item (i.e. add symbol) color to automatically adjust for readability
+        // NOTE: IN ORDER TO WORK, NEED TO CHANGE TINT COLOR FOR BAR BUTTON ITEM TO DEFAULT
+        navBar.tintColor = UIColor(contrastingBlackOrWhiteColorOn: UIColor(hexString: hexColor), isFlat: true)
+        
+        // Change the search bar's barTintColor (search bar's background color)
+        searchBar.barTintColor = UIColor(hexString: hexColor)
     }
 
     // MARK: - Table view data source
