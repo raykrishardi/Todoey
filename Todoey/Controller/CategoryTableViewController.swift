@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import SwipeCellKit
 
 class CategoryTableViewController: UITableViewController {
     
@@ -30,7 +31,9 @@ class CategoryTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath) as! SwipeTableViewCell
+        
+        cell.delegate = self
 
         cell.textLabel?.text = categories?[indexPath.row].name ?? "No Category"
 
@@ -88,5 +91,49 @@ class CategoryTableViewController: UITableViewController {
         
 //        self.tableView.reloadData()
     }
+    
+}
+
+extension CategoryTableViewController: SwipeTableViewCellDelegate {
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
+        guard orientation == .right else { return nil }
+        
+        let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
+            // handle action by updating model with deletion
+            
+            if let categoryForDeletion = self.categories?[indexPath.row] {
+                do {
+                    try self.realm.write {
+                        
+                        for item in categoryForDeletion.items {
+                            self.realm.delete(item)
+                        }
+                        
+                        self.realm.delete(categoryForDeletion)
+                    }
+                } catch {
+                    print("Error deleting from Realm: \(error)")
+                }
+                // NOT REQUIRED if you already have "editActionsOptionsForItemAt"
+                // HOWEVER, "editActionsOptionsForItemAt" DOES NOT SEEM TO WORK WITH SWIFT 5 AND XCODE 10.2.1
+                // THEREFORE, this is required or the app will crash
+                tableView.reloadData()
+            }
+        }
+        
+        // customize the action appearance
+        deleteAction.image = UIImage(named: "Trash-Icon")
+        
+        return [deleteAction]
+    }
+    
+    // DOES NOT WORK WITH SWIFT 5 AND XCODE 10.2.1
+//    func collectionView(_ collectionView: UICollectionView, editActionsOptionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
+//        var options = SwipeOptions()
+//        options.expansionStyle = .destructive
+//        options.transitionStyle = .border
+//        return options
+//    }
+    
     
 }
