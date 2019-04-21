@@ -11,11 +11,19 @@ import RealmSwift
 
 class Category: Object {
     @objc dynamic var name = ""
+    @objc dynamic var hexColor = ""
     let items = List<Item>()
     
     convenience init(name: String) {
         self.init()
         
         self.name = name
+    }
+    
+    convenience init(name: String, hexColor: String) {
+        self.init()
+        
+        self.name = name
+        self.hexColor = hexColor
     }
 }
