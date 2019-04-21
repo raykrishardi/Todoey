@@ -47,13 +47,12 @@ class SwipeTableViewController: UITableViewController, SwipeTableViewCellDelegat
         return [deleteAction]
     }
     
-    // DOES NOT WORK WITH SWIFT 5 AND XCODE 10.2.1
-    //    func collectionView(_ collectionView: UICollectionView, editActionsOptionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
-    //        var options = SwipeOptions()
-    //        options.expansionStyle = .destructive
-    //        options.transitionStyle = .border
-    //        return options
-    //    }
+    // Perform delete action when you swipe to the left edge
+    func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
+        var options = SwipeOptions()
+        options.expansionStyle = .destructive
+        return options
+    }
     
     // MARK: - To be overriden by subclass
     // Delete the row when the user swipes and clicks on the delete button

@@ -110,9 +110,7 @@ class CategoryTableViewController: SwipeTableViewController {
                 print("Error deleting from Realm: \(error)")
             }
             // NOT REQUIRED if you already have "editActionsOptionsForItemAt"
-            // HOWEVER, "editActionsOptionsForItemAt" DOES NOT SEEM TO WORK WITH SWIFT 5 AND XCODE 10.2.1
-            // THEREFORE, this is required or the app will crash
-            tableView.reloadData()
+//            tableView.reloadData()
         }
     }
     

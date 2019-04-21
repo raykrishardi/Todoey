@@ -165,7 +165,6 @@ class TodoListTableViewController: SwipeTableViewController {
             } catch {
                 print("Error deleting from Realm: \(error)")
             }
-            tableView.reloadData()
         }
     }
     
