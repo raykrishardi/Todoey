@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
 class TodoListTableViewController: SwipeTableViewController {
     
@@ -40,6 +41,16 @@ class TodoListTableViewController: SwipeTableViewController {
             cell.textLabel?.text = item.title
             
             cell.accessoryType = (item.isDone) ? .checkmark : .none
+            
+            // Change the cell's background color to have a gradient of color depending on the category's color (lighter -> darker)
+            // IN ADDITION, AUTOMATICALLY SET THE TEXT LABEL COLOR DEPENDING ON THE BACKGROUND COLOR (I.E. WHITE TEXT COLOR ON BLACK BACKGROUND AND VICE VERSA) TO IMPROVE READABILITY
+            if let color = UIColor(hexString: selectedCategory?.hexColor).darken(byPercentage: (CGFloat(indexPath.row) / CGFloat(items!.count))) {
+                
+                cell.backgroundColor = color
+                    
+                cell.textLabel?.textColor = UIColor(contrastingBlackOrWhiteColorOn: color, isFlat: true)
+            }
+            
             
         }
 
